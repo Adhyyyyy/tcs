@@ -1,0 +1,2798 @@
+# TCS NQT CODING — Q2 MASTER
+
+## HIGH-ROI PYQ / PATTERN REVISION SYSTEM
+
+## PART 1 — PROBLEMS 1–10
+
+## C++17
+
+═══════════════════════════════════════════════════════════════
+Q2 MASTER — PART 1
+═══════════════════════════════════════════════════════════════
+
+OBJECTIVE:
+
+```
+Q1 → secure the easier question
+
+Q2 → recognize the algorithm quickly
+      + implement the efficient template
+      + maximize hidden test cases
+```
+
+───────────────────────────────────────────────────────────────
+
+HIGH-ROI ORDER
+
+```
+1. Postfix Expression Evaluation
+2. Fixed Sliding Window — Maximum Sum of K
+3. Longest Substring Without Repeating Characters
+4. Subarray With Given Sum
+5. Next Greater Element
+6. Balanced Parentheses
+7. Sort 0,1,2
+8. K Largest Elements — Min Heap
+9. Prefix Sum / Range Sum
+10. Monotonic Stack — TCS 2289-Type Pattern
+```
+
+───────────────────────────────────────────────────────────────
+
+CORE PATTERNS
+
+```
+STACK
+   │
+   ├── Postfix
+   ├── Balanced Parentheses
+   ├── Next Greater
+   └── Monotonic Stack
+
+SLIDING WINDOW
+   │
+   ├── Fixed K
+   ├── Longest Unique
+   └── Subarray Sum
+
+HEAP
+   │
+   └── K Largest
+
+TWO POINTER
+   │
+   └── Sort 0,1,2
+
+PREFIX SUM
+   │
+   └── Range / balance problems
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 1. POSTFIX EXPRESSION EVALUATION
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## WHY #1?
+
+This is one of the strongest Q2 choices because it is not merely
+a generic preparation problem.
+
+A July 6, 2026 reported TCS NQT shift had:
+
+```
+Q1 → Maximum & Minimum
+Q2 → Postfix Expression Evaluation
+```
+
+So this exact family has appeared as Q2 in the current cycle.
+
+───────────────────────────────────────────────────────────────
+
+## PROBLEM
+
+Evaluate:
+
+```
+2 3 + 4 *
+```
+
+Interpret:
+
+```
+2 + 3 = 5
+```
+
+then:
+
+```
+5 * 4 = 20
+```
+
+Answer:
+
+```
+20
+```
+
+───────────────────────────────────────────────────────────────
+
+## FIRST RECOGNITION
+
+Question contains:
+
+```
+postfix
+RPN
+Reverse Polish
+operator comes AFTER operands
+```
+
+Immediately think:
+
+```
+STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+## INTUITION
+
+Read from left → right.
+
+If number:
+
+```
+PUSH
+```
+
+If operator:
+
+```
+POP second
+POP first
+```
+
+Then:
+
+```
+first operator second
+```
+
+Push result back.
+
+───────────────────────────────────────────────────────────────
+
+## EXAMPLE
+
+Expression:
+
+```
+5 3 2 * +
+```
+
+Read:
+
+```
+5 → push
+
+3 → push
+
+2 → push
+
+*:
+
+    3 * 2
+    = 6
+
+stack:
+
+    5 6
+
++:
+
+    5 + 6
+    = 11
+```
+
+───────────────────────────────────────────────────────────────
+
+## CRITICAL STACK ORDER
+
+Suppose:
+
+```
+8 2 -
+```
+
+When "-" appears:
+
+```
+first pop  → 2
+second pop → 8
+```
+
+Therefore:
+
+```
+second - first
+```
+
+NOT:
+
+```
+first - second
+```
+
+This is the #1 postfix mistake.
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+stack<long long> st;
+
+for(char c : expression) {
+
+    if(isdigit(c)) {
+
+        st.push(c - '0');
+    }
+
+    else {
+
+        long long b = st.top();
+        st.pop();
+
+        long long a = st.top();
+        st.pop();
+
+        long long result;
+
+        if(c == '+')
+            result = a + b;
+
+        else if(c == '-')
+            result = a - b;
+
+        else if(c == '*')
+            result = a * b;
+
+        else if(c == '/')
+            result = a / b;
+
+        st.push(result);
+    }
+}
+
+cout << st.top();
+```
+
+───────────────────────────────────────────────────────────────
+
+## IF TOKENS CAN BE MULTI-DIGIT
+
+Example:
+
+```
+12 3 +
+```
+
+Then don't process character-by-character.
+
+Use:
+
+```
+stringstream
+```
+
+and process:
+
+```
+token
+```
+
+instead.
+
+───────────────────────────────────────────────────────────────
+
+## MASTER PATTERN
+
+```
+         POSTFIX
+            │
+            ▼
+          STACK
+            │
+   ┌────────┴────────┐
+   │                 │
+ NUMBER           OPERATOR
+   │                 │
+  PUSH           POP TWO
+                     │
+                     ▼
+                 CALCULATE
+                     │
+                     ▼
+                    PUSH
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Postfix
+RPN
+Expression evaluation
+Calculator
+Operator processing
+```
+
+───────────────────────────────────────────────────────────────
+
+## COMPLEXITY
+
+```
+Time  : O(N)
+Space : O(N)
+```
+
+───────────────────────────────────────────────────────────────
+
+## MEMORY LINE
+
+```
+NUMBER → PUSH
+
+OPERATOR →
+    POP
+    POP
+    CALCULATE
+    PUSH
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 2. FIXED SLIDING WINDOW
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Find maximum sum of exactly K consecutive elements.
+
+Example:
+
+```
+[2,1,5,1,3,2]
+```
+
+K:
+
+```
+3
+```
+
+Windows:
+
+```
+2+1+5 = 8
+1+5+1 = 7
+5+1+3 = 9
+1+3+2 = 6
+```
+
+Answer:
+
+```
+9
+```
+
+───────────────────────────────────────────────────────────────
+
+## WHY HIGH ROI?
+
+Sliding-window questions are explicitly included among the recurring
+TCS coding archetypes, and a 2026 TCS coding example has been reported
+using sliding-window logic.
+
+───────────────────────────────────────────────────────────────
+
+## WRONG APPROACH
+
+For every window:
+
+```
+calculate sum again
+```
+
+Complexity:
+
+```
+O(N*K)
+```
+
+───────────────────────────────────────────────────────────────
+
+## KEY OBSERVATION
+
+When window moves:
+
+```
+[2 1 5]
+   ↓
+```
+
+to:
+
+```
+[1 5 1]
+```
+
+We don't need to recalculate.
+
+Remove:
+
+```
+2
+```
+
+Add:
+
+```
+1
+```
+
+Therefore:
+
+```
+newSum =
+    oldSum
+    - outgoing
+    + incoming
+```
+
+───────────────────────────────────────────────────────────────
+
+## CORE TEMPLATE
+
+```
+sum first K elements
+
+answer = sum
+
+for i = K to N-1:
+
+    sum += a[i]
+
+    sum -= a[i-K]
+
+    answer = max(answer, sum)
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+long long sum = 0;
+
+for(int i = 0; i < k; i++)
+    sum += a[i];
+
+long long best = sum;
+
+for(int i = k; i < n; i++) {
+
+    sum += a[i];
+
+    sum -= a[i-k];
+
+    best = max(best, sum);
+}
+
+cout << best;
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+Look for:
+
+```
+exactly K consecutive
+K consecutive
+fixed-size window
+maximum/minimum among every K elements
+```
+
+Think:
+
+```
+FIXED SLIDING WINDOW
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER MEMORY
+
+```
+    WINDOW
+┌───────────────┐
+│               │
+│  K ELEMENTS   │
+│               │
+└───────────────┘
+   ↑         ↑
+ REMOVE     ADD
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Minimum sum of K
+Average of K
+Maximum average
+Count elements in each K-window
+Maximum in every K-window
+```
+
+───────────────────────────────────────────────────────────────
+
+## COMPLEXITY
+
+```
+O(N)
+```
+
+───────────────────────────────────────────────────────────────
+
+# 3. LONGEST SUBSTRING WITHOUT REPEATING CHARACTERS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Input:
+
+```
+"abcabcbb"
+```
+
+Longest substring without repetition:
+
+```
+"abc"
+```
+
+Length:
+
+```
+3
+```
+
+───────────────────────────────────────────────────────────────
+
+## WHY HIGH ROI?
+
+The current TCS coding pattern analysis explicitly lists this as
+a sliding-window archetype.
+
+───────────────────────────────────────────────────────────────
+
+## FIRST RECOGNITION
+
+Question says:
+
+```
+longest substring
+   +
+no repeated character
+```
+
+Think:
+
+```
+SLIDING WINDOW
+      +
+   HASHSET
+```
+
+───────────────────────────────────────────────────────────────
+
+## INTUITION
+
+Maintain a valid window:
+
+```
+[left ........ right]
+```
+
+Move:
+
+```
+right
+```
+
+When duplicate appears:
+
+```
+shrink from left
+```
+
+until duplicate disappears.
+
+───────────────────────────────────────────────────────────────
+
+## CORE TEMPLATE
+
+```
+left = 0
+
+for right = 0 → n-1:
+
+    while current character
+          already exists:
+
+        remove s[left]
+
+        left++
+
+    add s[right]
+
+    update answer
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+unordered_set<char> seen;
+
+int left = 0;
+int best = 0;
+
+for(int right = 0;
+    right < s.size();
+    right++) {
+
+    while(seen.count(s[right])) {
+
+        seen.erase(s[left]);
+
+        left++;
+    }
+
+    seen.insert(s[right]);
+
+    best = max(
+        best,
+        right - left + 1
+    );
+}
+
+cout << best;
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER IDEA
+
+```
+RIGHT → EXPAND
+
+DUPLICATE
+   ↓
+LEFT → SHRINK
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+longest
+substring
+unique
+no repetition
+distinct characters
+```
+
+Think:
+
+```
+VARIABLE SLIDING WINDOW
+```
+
+───────────────────────────────────────────────────────────────
+
+## DIFFERENCE FROM FIXED WINDOW
+
+FIXED:
+
+```
+window size = K
+```
+
+VARIABLE:
+
+```
+window expands/shrinks
+based on a condition
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Longest unique substring
+Longest substring with K distinct
+Longest valid segment
+Smallest window satisfying condition
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER CONNECTION
+
+```
+SLIDING WINDOW
+      │
+   ┌──┴──┐
+   │     │
+ FIXED VARIABLE
+   │     │
+  K    CONDITION
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 4. SUBARRAY WITH GIVEN SUM
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Find whether a contiguous subarray has sum:
+
+```
+K
+```
+
+Example:
+
+```
+[1,4,20,3,10,5]
+```
+
+K:
+
+```
+33
+```
+
+Subarray:
+
+```
+20 + 3 + 10 = 33
+```
+
+───────────────────────────────────────────────────────────────
+
+## IMPORTANT CONDITION
+
+The simple sliding-window solution works when:
+
+```
+all numbers are NON-NEGATIVE
+```
+
+This distinction is critical.
+
+───────────────────────────────────────────────────────────────
+
+## WHY?
+
+With non-negative numbers:
+
+If current sum becomes too large:
+
+```
+remove from left
+```
+
+If too small:
+
+```
+expand right
+```
+
+───────────────────────────────────────────────────────────────
+
+## TEMPLATE
+
+```
+left = 0
+sum = 0
+
+for right:
+
+    sum += a[right]
+
+    while(sum > K):
+
+        sum -= a[left]
+        left++
+
+    if(sum == K)
+        found
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+long long sum = 0;
+
+int left = 0;
+
+for(int right = 0;
+    right < n;
+    right++) {
+
+    sum += a[right];
+
+    while(sum > k &&
+          left <= right) {
+
+        sum -= a[left];
+
+        left++;
+    }
+
+    if(sum == k) {
+
+        cout << "YES";
+        return;
+    }
+}
+
+cout << "NO";
+```
+
+───────────────────────────────────────────────────────────────
+
+## WARNING
+
+If negative values exist:
+
+```
+DO NOT automatically use
+this sliding window.
+```
+
+Use:
+
+```
+PREFIX SUM + HASHMAP
+```
+
+instead.
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+contiguous
+   +
+sum
+   +
+positive/non-negative
+```
+
+Think:
+
+```
+SLIDING WINDOW
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Subarray sum K
+Continuous segment sum
+Find target-sum segment
+Count subarrays with sum K
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER DECISION
+
+```
+    SUBARRAY SUM
+          │
+   ┌──────┴──────┐
+   │             │
+```
+
+NON-NEGATIVE    NEGATIVE
+│             │
+▼             ▼
+SLIDING        PREFIX SUM
+WINDOW         + HASHMAP
+
+═══════════════════════════════════════════════════════════════
+
+# 5. NEXT GREATER ELEMENT
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+For every element, find the first greater element to its right.
+
+Input:
+
+```
+[4,5,2,10,8]
+```
+
+Output:
+
+```
+5 10 10 -1 -1
+```
+
+───────────────────────────────────────────────────────────────
+
+## FIRST REACTION
+
+Naive:
+
+For every element:
+
+```
+scan right
+```
+
+O(N²)
+
+But we can do:
+
+```
+O(N)
+```
+
+using:
+
+```
+MONOTONIC STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+## INTUITION
+
+Suppose:
+
+```
+current = 10
+```
+
+Any smaller values waiting for their greater element:
+
+```
+2
+5
+4
+```
+
+can all resolve to:
+
+```
+10
+```
+
+Maintain unresolved elements in a stack.
+
+───────────────────────────────────────────────────────────────
+
+## CORE RULE
+
+While:
+
+```
+stack not empty
+AND
+stack.top < current
+```
+
+POP.
+
+For each popped element:
+
+```
+answer = current
+```
+
+Then:
+
+```
+push current
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+vector<int> ans(n, -1);
+
+stack<int> st;
+
+for(int i = n-1; i >= 0; i--) {
+
+    while(!st.empty() &&
+          st.top() <= a[i]) {
+
+        st.pop();
+    }
+
+    if(!st.empty())
+        ans[i] = st.top();
+
+    st.push(a[i]);
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER INTUITION
+
+```
+        CURRENT
+           │
+           ▼
+    "Can current solve
+     the elements waiting
+     in the stack?"
+           │
+          YES
+           │
+           ▼
+         POP
+           │
+           ▼
+         ANSWER
+           │
+           ▼
+         PUSH
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+next greater
+next larger
+first larger on right
+nearest greater
+```
+
+Think:
+
+```
+MONOTONIC STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Next smaller
+Previous greater
+Previous smaller
+Daily temperatures
+Stock span
+Histogram
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER CONNECTION
+
+```
+"NEXT"
+   +
+"GREATER/SMALLER"
+   +
+ARRAY
+
+      ↓
+
+MONOTONIC STACK
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 6. BALANCED PARENTHESES
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Check:
+
+```
+"({[]})"
+```
+
+Valid.
+
+But:
+
+```
+"([)]"
+```
+
+Invalid.
+
+───────────────────────────────────────────────────────────────
+
+## FIRST RECOGNITION
+
+Question contains:
+
+```
+parentheses
+brackets
+braces
+matching pairs
+```
+
+Think:
+
+```
+STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+## INTUITION
+
+Opening bracket:
+
+```
+PUSH
+```
+
+Closing bracket:
+
+```
+top must be matching opening bracket
+```
+
+Then:
+
+```
+POP
+```
+
+───────────────────────────────────────────────────────────────
+
+## MATCHING
+
+```
+'(' ↔ ')'
+'{' ↔ '}'
+'[' ↔ ']'
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+stack<char> st;
+
+for(char c : s) {
+
+    if(c == '(' ||
+       c == '{' ||
+       c == '[') {
+
+        st.push(c);
+    }
+
+    else {
+
+        if(st.empty()) {
+
+            cout << "NO";
+            return;
+        }
+
+        char top = st.top();
+
+        if((c == ')' && top != '(') ||
+           (c == '}' && top != '{') ||
+           (c == ']' && top != '[')) {
+
+            cout << "NO";
+            return;
+        }
+
+        st.pop();
+    }
+}
+
+cout << (st.empty() ? "YES" : "NO");
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER IDEA
+
+```
+OPEN → PUSH
+
+CLOSE
+  ↓
+MATCH TOP
+  ↓
+POP
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+matching brackets
+balanced brackets
+valid parentheses
+nested brackets
+```
+
+Think:
+
+```
+STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+HTML tag matching
+Expression validation
+Nested structure
+Parentheses depth
+```
+
+───────────────────────────────────────────────────────────────
+
+# 7. SORT 0, 1, 2
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Sort:
+
+```
+[2,0,2,1,1,0]
+```
+
+Output:
+
+```
+[0,0,1,1,2,2]
+```
+
+───────────────────────────────────────────────────────────────
+
+## FIRST OPTION
+
+Counting:
+
+```
+count0
+count1
+count2
+```
+
+Then overwrite.
+
+This is perfectly valid when values are exactly:
+
+```
+0,1,2
+```
+
+───────────────────────────────────────────────────────────────
+
+## THREE-POINTER METHOD
+
+Maintain:
+
+```
+low
+mid
+high
+```
+
+Regions:
+
+```
+[0 ... low-1]      → 0
+[low ... mid-1]    → 1
+[mid ... high]     → unknown
+[high+1 ... n-1]   → 2
+```
+
+───────────────────────────────────────────────────────────────
+
+## RULES
+
+If:
+
+```
+a[mid] == 0
+```
+
+then:
+
+```
+swap(a[low], a[mid])
+low++
+mid++
+```
+
+If:
+
+```
+a[mid] == 1
+```
+
+then:
+
+```
+mid++
+```
+
+If:
+
+```
+a[mid] == 2
+```
+
+then:
+
+```
+swap(a[mid], a[high])
+high--
+```
+
+IMPORTANT:
+
+After swapping 2 with high:
+
+```
+DO NOT increment mid
+```
+
+because the new value at mid is unprocessed.
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+int low = 0;
+int mid = 0;
+int high = n - 1;
+
+while(mid <= high) {
+
+    if(a[mid] == 0) {
+
+        swap(a[low], a[mid]);
+
+        low++;
+        mid++;
+    }
+
+    else if(a[mid] == 1) {
+
+        mid++;
+    }
+
+    else {
+
+        swap(a[mid], a[high]);
+
+        high--;
+    }
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+only 0,1,2
+sort three values
+colors / categories 0,1,2
+```
+
+Think:
+
+```
+DUTCH NATIONAL FLAG
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Partition
+Sort binary array
+Move negatives
+Three-way partition
+```
+
+───────────────────────────────────────────────────────────────
+
+# 8. K LARGEST ELEMENTS — MIN HEAP
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## WHY #8?
+
+This is especially important because a July 7, 2026 reported TCS shift had:
+
+```
+Q1 → K Largest Elements using Min Heap
+Q2 → Heap-based higher-level problem
+```
+
+So heap knowledge has appeared directly in the current cycle.
+
+───────────────────────────────────────────────────────────────
+
+## PROBLEM
+
+Find K largest elements.
+
+Input:
+
+```
+[3,2,1,5,6,4]
+```
+
+K:
+
+```
+2
+```
+
+Answer:
+
+```
+5,6
+```
+
+───────────────────────────────────────────────────────────────
+
+## KEY IDEA
+
+We only need:
+
+```
+K largest
+```
+
+We don't need to keep every element sorted.
+
+Maintain a:
+
+```
+MIN HEAP of size K
+```
+
+Why min heap?
+
+Because the smallest among our current K largest elements
+must be removed when a bigger element arrives.
+
+───────────────────────────────────────────────────────────────
+
+## PROCESS
+
+For each x:
+
+```
+push x
+```
+
+If heap size > K:
+
+```
+pop smallest
+```
+
+At the end:
+
+```
+heap contains K largest
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+priority_queue<
+    int,
+    vector<int>,
+    greater<int>
+> pq;
+
+for(int x : a) {
+
+    pq.push(x);
+
+    if(pq.size() > k)
+        pq.pop();
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## WHY MIN HEAP?
+
+Suppose:
+
+```
+K = 3
+```
+
+Current:
+
+```
+10,20,30
+```
+
+Heap:
+
+```
+10
+ ↓
+smallest of selected K
+```
+
+New:
+
+```
+40
+```
+
+Remove:
+
+```
+10
+```
+
+Keep:
+
+```
+20,30,40
+```
+
+Therefore:
+
+```
+MIN HEAP
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+K largest
+top K
+K biggest
+K highest values
+```
+
+Think:
+
+```
+MIN HEAP OF SIZE K
+```
+
+───────────────────────────────────────────────────────────────
+
+## OPPOSITE
+
+K smallest:
+
+```
+MAX HEAP of size K
+```
+
+───────────────────────────────────────────────────────────────
+
+## COMPLEXITY
+
+```
+O(N log K)
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+K smallest
+Kth largest
+Kth smallest
+Top K frequent
+Running K largest
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER CONNECTION
+
+```
+TOP K
+  │
+  ├── K LARGEST
+  │      ↓
+  │   MIN HEAP
+  │
+  └── K SMALLEST
+         ↓
+      MAX HEAP
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 9. PREFIX SUM / RANGE SUM
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Given:
+
+```
+[2,4,1,3,5]
+```
+
+Find sum from index:
+
+```
+1 → 3
+```
+
+Answer:
+
+```
+4 + 1 + 3
+= 8
+```
+
+───────────────────────────────────────────────────────────────
+
+## NAIVE
+
+For every query:
+
+```
+loop from L → R
+```
+
+If many queries:
+
+```
+O(NQ)
+```
+
+Too slow.
+
+───────────────────────────────────────────────────────────────
+
+## KEY IDEA
+
+Build:
+
+```
+prefix[i]
+```
+
+meaning:
+
+```
+sum from beginning to i
+```
+
+For:
+
+```
+[2,4,1,3,5]
+```
+
+prefix:
+
+```
+[2,6,7,10,15]
+```
+
+───────────────────────────────────────────────────────────────
+
+## RANGE FORMULA
+
+For:
+
+```
+L → R
+```
+
+sum:
+
+```
+prefix[R]
+-
+prefix[L-1]
+```
+
+If:
+
+```
+L == 0
+```
+
+then:
+
+```
+prefix[R]
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+vector<long long> pref(n);
+
+pref[0] = a[0];
+
+for(int i = 1; i < n; i++)
+    pref[i] =
+        pref[i-1] + a[i];
+
+long long sum;
+
+if(l == 0)
+    sum = pref[r];
+
+else
+    sum =
+        pref[r] - pref[l-1];
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+many range sums
+sum between L and R
+repeated subarray sum queries
+```
+
+Think:
+
+```
+PREFIX SUM
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Range sum
+Equilibrium
+Subarray sum
+Prefix maximum
+Prefix minimum
+Running total
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER CONNECTION
+
+```
+REPEATED RANGE QUERY
+        ↓
+    PREFIX SUM
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 10. MONOTONIC STACK — TCS 2289-TYPE PATTERN
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## WHY #10?
+
+This one is particularly important because a July 25, 2026 reported
+TCS NQT Q2 was described as similar to LeetCode 2289, with the condition
+modified to depend on the next element. The candidate reported getting
+TLE on their solution.
+
+This is exactly the kind of Q2 where:
+
+```
+naive simulation
+    ↓
+   TLE
+```
+
+and:
+
+```
+monotonic stack
+    ↓
+efficient solution
+```
+
+───────────────────────────────────────────────────────────────
+
+## FIRST THING TO UNDERSTAND
+
+LeetCode-2289 style problems are about:
+
+```
+repeated removal
+   +
+elements becoming eligible
+   +
+multiple rounds
+```
+
+The naive approach:
+
+```
+repeatedly scan array
+remove elements
+repeat
+```
+
+can become:
+
+```
+O(N²)
+```
+
+───────────────────────────────────────────────────────────────
+
+## CORE RECOGNITION
+
+If question says:
+
+```
+remove elements based on neighbouring values
+```
+
+and:
+
+```
+removal happens in rounds
+```
+
+and:
+
+```
+N is large
+```
+
+ask:
+
+```
+"Can I avoid simulating every round?"
+```
+
+Often:
+
+```
+MONOTONIC STACK
+or
+DP + STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+## IMPORTANT
+
+Do NOT memorize one LeetCode-2289 implementation blindly.
+
+TCS may alter:
+
+```
+neighbour condition
+direction
+removal rule
+output
+```
+
+The reusable skill is:
+
+```
+MONOTONIC RELATION
+   +
+STACK
+   +
+STATE / DAYS
+```
+
+───────────────────────────────────────────────────────────────
+
+## BASIC MONOTONIC STACK THINKING
+
+For a decreasing/increasing relation:
+
+```
+while stack condition violated:
+
+    pop
+```
+
+Then:
+
+```
+push current
+```
+
+The stack represents:
+
+```
+elements still relevant
+for future comparisons
+```
+
+───────────────────────────────────────────────────────────────
+
+## GENERIC TEMPLATE
+
+```
+stack< pair<int,int> > st;
+
+for(int x : a) {
+
+    int state = ...;
+
+    while(!st.empty() &&
+          condition(st.top(), x)) {
+
+        // resolve old element
+
+        st.pop();
+    }
+
+    st.push({x, state});
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER QUESTION
+
+Ask:
+
+```
+"Which previous elements are no longer useful?"
+```
+
+If an element can never become useful again:
+
+```
+POP IT.
+```
+
+That is the heart of monotonic stacks.
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+next greater
+next smaller
+nearest greater
+repeated deletion
+remove based on neighbour
+days until condition
+previous elements become irrelevant
+```
+
+Think:
+
+```
+MONOTONIC STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Next Greater Element
+Daily Temperatures
+Stock Span
+Largest Rectangle
+Remove elements by condition
+LeetCode 2289 family
+```
+
+───────────────────────────────────────────────────────────────
+
+# Q2 PATTERN CONNECTION MAP
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+```
+                     Q2
+                      │
+     ┌────────────────┼─────────────────┐
+     │                │                 │
+   STACK            WINDOW             HEAP
+     │                │                 │
+┌────┼────┐       ┌───┴────┐            │
+│    │    │       │        │            │
+```
+
+Postfix  NGE  Valid  Fixed   Variable    Top K
+Bracket  K      Window
+│
+▼
+Unique String
+
+```
+                     Q2
+                      │
+                ARRAY / SUM
+                      │
+            ┌─────────┴─────────┐
+            │                   │
+         PREFIX              SUBARRAY
+            │                   │
+        Range Sum           Target Sum
+                            │
+                     ┌──────┴──────┐
+                     │             │
+                non-negative    negatives
+                     │             │
+                  Window       Prefix + Hash
+```
+
+═══════════════════════════════════════════════════════════════
+
+# THE MOST IMPORTANT Q2 SIMILARITIES
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## GROUP A — STACK
+
+```
+Postfix
+   │
+   ├── Parentheses
+   ├── Next Greater
+   ├── Stock Span
+   └── Monotonic Stack
+```
+
+MASTER QUESTION:
+
+```
+"Does the most recently unresolved
+ item matter?"
+```
+
+If YES:
+
+```
+STACK
+```
+
+═══════════════════════════════════════════════════════════════
+
+## GROUP B — SLIDING WINDOW
+
+```
+Fixed K
+   │
+   ├── Maximum sum
+   ├── Minimum sum
+   └── Average
+
+Variable
+   │
+   ├── Longest unique
+   ├── K distinct
+   └── Minimum valid window
+```
+
+MASTER QUESTION:
+
+```
+"Is the answer about a contiguous
+ region that can expand/shrink?"
+```
+
+If YES:
+
+```
+SLIDING WINDOW
+```
+
+═══════════════════════════════════════════════════════════════
+
+## GROUP C — TOP K
+
+```
+K largest
+   ↓
+MIN HEAP
+
+K smallest
+   ↓
+MAX HEAP
+```
+
+MASTER MEMORY:
+
+```
+Want K LARGEST
+     ↓
+keep smallest among selected
+     ↓
+   MIN HEAP
+```
+
+═══════════════════════════════════════════════════════════════
+
+## GROUP D — SUBARRAY SUM
+
+```
+Non-negative
+     ↓
+SLIDING WINDOW
+
+Negative possible
+     ↓
+PREFIX SUM + HASHMAP
+```
+
+This distinction prevents a very common wrong solution.
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 STORY → PATTERN TRANSLATOR
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"Evaluate postfix expression"
+↓
+STACK
+
+"Matching brackets"
+↓
+STACK
+
+"Next greater element"
+↓
+MONOTONIC STACK
+
+"Exactly K consecutive elements"
+↓
+FIXED SLIDING WINDOW
+
+"Longest substring without repetition"
+↓
+VARIABLE SLIDING WINDOW + HASHSET
+
+"Contiguous subarray sum K"
+↓
+SLIDING WINDOW
+IF NON-NEGATIVE
+
+"Subarray sum K with negative values"
+↓
+PREFIX SUM + HASHMAP
+
+"Top K largest"
+↓
+MIN HEAP
+
+"Top K smallest"
+↓
+MAX HEAP
+
+"Repeated range sum"
+↓
+PREFIX SUM
+
+"Repeated deletion based on neighbours"
+↓
+MONOTONIC STACK / DP-STACK
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 CORE CODE LINES
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## POSTFIX
+
+```
+b = st.top(); st.pop();
+a = st.top(); st.pop();
+
+result = a OP b;
+
+st.push(result);
+```
+
+───────────────────────────────────────────────────────────────
+
+## FIXED WINDOW
+
+```
+sum += a[i];
+sum -= a[i-k];
+```
+
+───────────────────────────────────────────────────────────────
+
+## VARIABLE WINDOW
+
+```
+while(condition_invalid) {
+
+    remove a[left++];
+
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## NEXT GREATER
+
+```
+while(!st.empty() &&
+      st.top() <= current)
+
+    st.pop();
+```
+
+───────────────────────────────────────────────────────────────
+
+## BALANCED BRACKETS
+
+```
+OPEN  → PUSH
+
+CLOSE →
+    CHECK TOP
+    POP
+```
+
+───────────────────────────────────────────────────────────────
+
+## TOP K
+
+```
+pq.push(x);
+
+if(pq.size() > k)
+    pq.pop();
+```
+
+───────────────────────────────────────────────────────────────
+
+## PREFIX SUM
+
+```
+pref[i] =
+    pref[i-1] + a[i];
+```
+
+───────────────────────────────────────────────────────────────
+
+## RANGE SUM
+
+```
+pref[r] -
+pref[l-1]
+```
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 COMMON TRAPS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1.
+
+POSTFIX:
+
+```
+POP ORDER MATTERS
+
+secondPop OP firstPop
+```
+
+───────────────────────────────────────────────────────────────
+
+2.
+
+SLIDING WINDOW:
+
+Know whether the window is:
+
+```
+FIXED SIZE
+```
+
+or:
+
+```
+CONDITION BASED
+```
+
+───────────────────────────────────────────────────────────────
+
+3.
+
+SUBARRAY SUM:
+
+Negative numbers?
+
+```
+Sliding window may fail.
+```
+
+Use:
+
+```
+Prefix Sum + HashMap
+```
+
+───────────────────────────────────────────────────────────────
+
+4.
+
+NEXT GREATER:
+
+When moving right → left:
+
+```
+stack contains candidates
+for future elements.
+```
+
+───────────────────────────────────────────────────────────────
+
+5.
+
+MONOTONIC STACK:
+
+After swapping/popping:
+
+```
+don't blindly move the pointer.
+```
+
+Re-evaluate the newly exposed element.
+
+───────────────────────────────────────────────────────────────
+
+6.
+
+DUTCH NATIONAL FLAG:
+
+When swapping:
+
+```
+a[mid] with a[high]
+```
+
+do NOT increment mid immediately.
+
+───────────────────────────────────────────────────────────────
+
+7.
+
+HEAP:
+
+K LARGEST:
+
+```
+MIN HEAP
+```
+
+K SMALLEST:
+
+```
+MAX HEAP
+```
+
+───────────────────────────────────────────────────────────────
+
+8.
+
+PREFIX SUM:
+
+For:
+
+```
+l = 0
+```
+
+don't access:
+
+```
+pref[-1]
+```
+
+───────────────────────────────────────────────────────────────
+
+9.
+
+TCS INPUT:
+
+Don't assume LeetCode-style function signatures.
+
+Recent candidates reported comma-separated and space-separated
+inputs, and some questions required constructing the full program/input
+handling themselves.
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 MASTER BRAIN
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+```
+                READ QUESTION
+                       │
+                       ▼
+                LOOK FOR SIGNAL
+                       │
+      ┌────────────────┼────────────────┐
+      │                │                │
+   EXPRESSION        WINDOW           TOP K
+      │                │                │
+    STACK          SLIDING WINDOW     HEAP
+      │                │                │
+  postfix         contiguous          largest
+  brackets        segment             smallest
+  operators       K elements          top K
+      │                │
+      │          ┌─────┴─────┐
+      │          │           │
+      │        FIXED       VARIABLE
+      │          │           │
+      │           K        condition
+      │
+      ▼
+  MONOTONIC
+    STACK
+      │
+  next greater
+  next smaller
+  repeated deletion
+
+                       │
+                       ▼
+
+                    SUM QUERY
+                       │
+              ┌────────┴────────┐
+              │                 │
+           RANGE             SUBARRAY
+              │                 │
+          PREFIX SUM       ┌────┴────┐
+                            │         │
+                        non-negative negative
+                            │         │
+                          WINDOW   PREFIX+HASH
+```
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 REVISION ORDER — PART 1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MASTER FIRST:
+
+```
+1. Postfix Expression
+2. Fixed Sliding Window
+3. Longest Unique Substring
+4. Subarray Sum
+5. Next Greater Element
+```
+
+THEN:
+
+```
+6. Balanced Parentheses
+7. Sort 0/1/2
+8. K Largest / Min Heap
+9. Prefix Sum
+10. Monotonic Stack / 2289-Type
+```
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 SELF-TEST
+
+Before moving on, I should be able to see:
+
+```
+"Evaluate 7 2 3 * +"
+```
+
+and immediately say:
+
+```
+POSTFIX
+   ↓
+STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+```
+"Maximum sum of exactly 5 consecutive elements."
+```
+
+and immediately say:
+
+```
+FIXED SLIDING WINDOW
+```
+
+───────────────────────────────────────────────────────────────
+
+```
+"Longest substring containing no repeated characters."
+```
+
+and immediately say:
+
+```
+VARIABLE WINDOW
+   +
+HASHSET
+```
+
+───────────────────────────────────────────────────────────────
+
+```
+"Find a continuous segment summing to X."
+```
+
+and immediately ask:
+
+```
+ARE NUMBERS NON-NEGATIVE?
+```
+
+YES:
+
+```
+SLIDING WINDOW
+```
+
+NO:
+
+```
+PREFIX SUM + HASHMAP
+```
+
+───────────────────────────────────────────────────────────────
+
+```
+"For every element, find the first
+ greater element to its right."
+```
+
+immediately:
+
+```
+MONOTONIC STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+```
+"Check whether brackets are balanced."
+```
+
+immediately:
+
+```
+STACK
+```
+
+───────────────────────────────────────────────────────────────
+
+```
+"Find K largest elements."
+```
+
+immediately:
+
+```
+MIN HEAP OF SIZE K
+```
+
+───────────────────────────────────────────────────────────────
+
+```
+"Find sum for many L-R queries."
+```
+
+immediately:
+
+```
+PREFIX SUM
+```
+
+───────────────────────────────────────────────────────────────
+
+```
+"Elements are repeatedly removed when
+ a neighbour satisfies a condition."
+```
+
+immediately investigate:
+
+```
+MONOTONIC STACK
+   +
+STATE / DP
+```
+
+═══════════════════════════════════════════════════════════════
+
+# CURRENT TCS Q2 STRATEGY
+
+```
+                Q2
+                 │
+                 ▼
+          CAN I RECOGNIZE IT?
+                 │
+      ┌──────────┴──────────┐
+      │                     │
+     YES                    NO
+      │                     │
+      ▼                     ▼
+   TEMPLATE            SIMPLIFY STORY
+      │                     │
+      ▼                     ▼
+   CODE                 BRUTE FORCE
+      │                     │
+      ▼                     ▼
+ TEST SAMPLES          CHECK COMPLEXITY
+      │                     │
+      └──────────┬──────────┘
+                 ▼
+             OPTIMIZE
+                 │
+                 ▼
+              SUBMIT
+```
+
+IMPORTANT:
+
+If you cannot derive the optimized solution quickly:
+
+```
+write the correct brute-force solution
+```
+
+if constraints allow it.
+
+Recent candidate reports specifically indicate that some TCS coding
+environments judge the final output rather than enforcing the
+suggested implementation technique; however, this is candidate
+experience, not an official TCS rule.
+
+═══════════════════════════════════════════════════════════════
+
+# END Q2 MASTER — PART 1
+
+10 HIGH-ROI Q2 PATTERNS COMPLETE.
+
+CURRENT MASTER SET:
+
+```
+Q1
+├── 30 high-ROI problems
+└── Core patterns mastered
+
+Q2
+├── 1. Postfix
+├── 2. Fixed Sliding Window
+├── 3. Longest Unique Substring
+├── 4. Subarray Sum
+├── 5. Next Greater
+├── 6. Balanced Parentheses
+├── 7. Sort 0/1/2
+├── 8. K Largest / Min Heap
+├── 9. Prefix Sum
+└── 10. Monotonic Stack / 2289-type
+```
+
+NEXT Q2 PART:
+
+```
+Trees / BST
+   │
+   ├── BST insertion
+   ├── Kth smallest
+   ├── Kth largest
+   ├── Tree height
+   └── Traversals
+
+Graph
+   │
+   ├── BFS
+   ├── DFS
+   ├── Grid shortest path
+   └── Connected components
+
+DP
+   │
+   ├── Climbing Stairs
+   ├── House Robber
+   └── Take / Skip
+```
+
+These are deliberately treated as an
+"advanced hedge", not as the main Q2 set,
+because recent July reports show BST/advanced
+problems can appear unexpectedly.
+
+═══════════════════════════════════════════════════════════════
