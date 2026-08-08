@@ -1,0 +1,2543 @@
+# TCS NQT CODING — Q2 MASTER
+
+## HIGH-ROI PYQ / PATTERN REVISION SYSTEM
+
+## PART 2 — TREES + BST + GRAPH + BASIC DP
+
+## C++17
+
+═══════════════════════════════════════════════════════════════
+Q2 MASTER — PART 2
+═══════════════════════════════════════════════════════════════
+
+OBJECTIVE
+
+```
+Do NOT try to master all Trees / Graph / DP.
+
+Master the recognition templates:
+
+    TREE
+      ↓
+    DFS / RECURSION
+
+    BST
+      ↓
+    ORDER PROPERTY
+
+    GRAPH
+      ↓
+    BFS / DFS
+
+    GRID
+      ↓
+    BFS / DFS
+
+    DP
+      ↓
+    TAKE / SKIP
+    or
+    PREVIOUS STATES
+```
+
+HIGH-ROI PROBLEMS
+
+```
+11. Tree Height / Maximum Depth
+12. Tree Traversals
+13. BST Search
+14. Kth Smallest / Kth Largest in BST
+15. Level Order Traversal
+16. Number of Islands / Connected Components
+17. BFS Shortest Path in Grid
+18. Climbing Stairs
+19. House Robber
+20. 0/1 Knapsack — Take / Skip
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 11. TREE HEIGHT / MAXIMUM DEPTH
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Given a binary tree, find its height.
+
+Example:
+
+```
+         1
+        / \
+       2   3
+      /
+     4
+```
+
+Height:
+
+```
+3
+```
+
+if height is counted in nodes.
+
+───────────────────────────────────────────────────────────────
+
+## FIRST RECOGNITION
+
+Question says:
+
+```
+height
+depth
+maximum depth
+longest root-to-leaf path
+```
+
+Think:
+
+```
+TREE DFS
+   +
+RECURSION
+```
+
+───────────────────────────────────────────────────────────────
+
+## INTUITION
+
+Height of a node:
+
+```
+1 + maximum(
+        height(left),
+        height(right)
+    )
+```
+
+───────────────────────────────────────────────────────────────
+
+## CORE FORMULA
+
+```
+height(node)
+    =
+1 + max(
+    height(left),
+    height(right)
+)
+```
+
+───────────────────────────────────────────────────────────────
+
+## BASE CASE
+
+If:
+
+```
+node == NULL
+```
+
+return:
+
+```
+0
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+int height(Node* root) {
+
+    if(root == nullptr)
+        return 0;
+
+    return 1 +
+        max(
+            height(root->left),
+            height(root->right)
+        );
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER RECURSION STORY
+
+```
+         NODE
+           │
+   ┌───────┴───────┐
+   ▼               ▼
+ LEFT            RIGHT
+   │               │
+height          height
+   │               │
+   └───────┬───────┘
+           ▼
+         MAX
+           │
+           ▼
+          +1
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+tree + maximum depth
+
+    ↓
+
+RECURSIVE DFS
+```
+
+───────────────────────────────────────────────────────────────
+
+## COMPLEXITY
+
+```
+Time  : O(N)
+Space : O(H)
+```
+
+where H = tree height.
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Minimum depth
+Diameter
+Maximum path
+Root-to-leaf depth
+```
+
+───────────────────────────────────────────────────────────────
+
+# 12. TREE TRAVERSALS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## THREE MUST KNOW
+
+```
+PREORDER
+INORDER
+POSTORDER
+```
+
+───────────────────────────────────────────────────────────────
+
+## PREORDER
+
+Order:
+
+```
+ROOT
+LEFT
+RIGHT
+```
+
+Memory:
+
+```
+    ROOT FIRST
+```
+
+Code:
+
+```
+void preorder(Node* root) {
+
+    if(!root)
+        return;
+
+    cout << root->data;
+
+    preorder(root->left);
+
+    preorder(root->right);
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## INORDER
+
+Order:
+
+```
+LEFT
+ROOT
+RIGHT
+```
+
+Code:
+
+```
+void inorder(Node* root) {
+
+    if(!root)
+        return;
+
+    inorder(root->left);
+
+    cout << root->data;
+
+    inorder(root->right);
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## POSTORDER
+
+Order:
+
+```
+LEFT
+RIGHT
+ROOT
+```
+
+Code:
+
+```
+void postorder(Node* root) {
+
+    if(!root)
+        return;
+
+    postorder(root->left);
+
+    postorder(root->right);
+
+    cout << root->data;
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## MEMORY TRICK
+
+```
+PRE:
+
+    ROOT before children
+
+IN:
+
+    ROOT between children
+
+POST:
+
+    ROOT after children
+```
+
+───────────────────────────────────────────────────────────────
+
+## MOST IMPORTANT BST FACT
+
+For a valid BST:
+
+```
+INORDER traversal
+    ↓
+SORTED ORDER
+```
+
+This fact is extremely important for:
+
+```
+Kth smallest
+Kth largest
+BST validation
+Sorted values
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+"print tree"
+"visit every node"
+"traversal"
+```
+
+Think:
+
+```
+DFS
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 13. BST SEARCH
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Search for:
+
+```
+X
+```
+
+in a Binary Search Tree.
+
+───────────────────────────────────────────────────────────────
+
+## BST PROPERTY
+
+For node:
+
+```
+X
+
+LEFT < X < RIGHT
+```
+
+Therefore:
+
+If target < current:
+
+```
+go LEFT
+```
+
+If target > current:
+
+```
+go RIGHT
+```
+
+If equal:
+
+```
+FOUND
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+bool search(Node* root, int target) {
+
+    if(root == nullptr)
+        return false;
+
+    if(root->data == target)
+        return true;
+
+    if(target < root->data)
+        return search(
+            root->left,
+            target
+        );
+
+    return search(
+        root->right,
+        target
+    );
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## KEY IDEA
+
+You do NOT search both sides.
+
+BST gives direction.
+
+───────────────────────────────────────────────────────────────
+
+## MASTER STORY
+
+```
+             CURRENT
+                │
+      ┌─────────┼─────────┐
+      │         │         │
+   target <   equal    target >
+      │         │         │
+      ▼         ▼         ▼
+    LEFT      FOUND      RIGHT
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+BST + search
+
+    ↓
+
+compare
+    ↓
+choose ONE side
+```
+
+───────────────────────────────────────────────────────────────
+
+## COMPLEXITY
+
+Average:
+
+```
+O(log N)
+```
+
+Worst case:
+
+```
+O(N)
+```
+
+───────────────────────────────────────────────────────────────
+
+# 14. KTH SMALLEST / KTH LARGEST IN BST
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## WHY VERY IMPORTANT?
+
+Recent 2026 candidate reports specifically mention a BST question
+involving Kth largest/smallest in a TCS NQT coding slot.
+
+───────────────────────────────────────────────────────────────
+
+## KEY FACT
+
+BST:
+
+```
+INORDER
+```
+
+produces:
+
+```
+SORTED ASCENDING ORDER
+```
+
+Therefore:
+
+```
+Kth smallest
+    ↓
+Kth element of inorder
+```
+
+───────────────────────────────────────────────────────────────
+
+## EXAMPLE
+
+BST:
+
+```
+        5
+       / \
+      3   7
+     / \   \
+    2   4   8
+```
+
+Inorder:
+
+```
+2 3 4 5 7 8
+```
+
+3rd smallest:
+
+```
+4
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE — KTH SMALLEST
+
+```
+void inorder(
+    Node* root,
+    int& k,
+    int& answer
+) {
+
+    if(!root)
+        return;
+
+    inorder(
+        root->left,
+        k,
+        answer
+    );
+
+    k--;
+
+    if(k == 0) {
+
+        answer = root->data;
+        return;
+    }
+
+    inorder(
+        root->right,
+        k,
+        answer
+    );
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## KTH LARGEST
+
+Use:
+
+```
+REVERSE INORDER
+```
+
+Order:
+
+```
+RIGHT
+ROOT
+LEFT
+```
+
+This gives:
+
+```
+descending order
+```
+
+Then:
+
+```
+kth visited
+    ↓
+kth largest
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER MEMORY
+
+```
+KTH SMALLEST
+
+    LEFT
+    ROOT
+    RIGHT
+
+
+KTH LARGEST
+
+    RIGHT
+    ROOT
+    LEFT
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+BST
+  +
+kth smallest
+
+    ↓
+
+INORDER
+
+BST
+  +
+kth largest
+
+    ↓
+
+REVERSE INORDER
+```
+
+───────────────────────────────────────────────────────────────
+
+## SIMILAR
+
+```
+Sorted values of BST
+BST validation
+Median BST
+Rank in BST
+```
+
+───────────────────────────────────────────────────────────────
+
+# 15. LEVEL ORDER TRAVERSAL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Visit:
+
+```
+level 1
+level 2
+level 3
+...
+```
+
+Example:
+
+```
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+Output:
+
+```
+1 2 3 4 5
+```
+
+───────────────────────────────────────────────────────────────
+
+## FIRST RECOGNITION
+
+Words:
+
+```
+level
+level by level
+breadth
+nearest level
+```
+
+Think:
+
+```
+QUEUE + BFS
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+queue<Node*> q;
+
+q.push(root);
+
+while(!q.empty()) {
+
+    Node* node = q.front();
+
+    q.pop();
+
+    cout << node->data;
+
+    if(node->left)
+        q.push(node->left);
+
+    if(node->right)
+        q.push(node->right);
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## WHY QUEUE?
+
+FIFO:
+
+```
+First node entering
+is processed first.
+```
+
+Therefore:
+
+```
+Level 1
+   ↓
+Level 2
+   ↓
+Level 3
+```
+
+───────────────────────────────────────────────────────────────
+
+## IF QUESTION NEEDS EACH LEVEL SEPARATELY
+
+Use:
+
+```
+int size = q.size();
+```
+
+Then process exactly:
+
+```
+size
+```
+
+nodes.
+
+───────────────────────────────────────────────────────────────
+
+## MASTER CONNECTION
+
+```
+TREE
+  +
+LEVEL
+  ↓
+BFS
+  ↓
+QUEUE
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 16. NUMBER OF ISLANDS / CONNECTED COMPONENTS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Grid:
+
+```
+1 1 0
+1 0 0
+0 1 1
+```
+
+Count connected groups of 1s.
+
+───────────────────────────────────────────────────────────────
+
+## FIRST RECOGNITION
+
+Words:
+
+```
+connected
+components
+islands
+groups
+regions
+```
+
+Think:
+
+```
+DFS / BFS
+```
+
+───────────────────────────────────────────────────────────────
+
+## INTUITION
+
+Scan every cell.
+
+When you find an unvisited land:
+
+```
+new island
+```
+
+Then:
+
+```
+DFS/BFS
+```
+
+to mark the entire island.
+
+───────────────────────────────────────────────────────────────
+
+## CODE — DFS
+
+```
+void dfs(
+    vector<vector<int>>& grid,
+    int r,
+    int c
+) {
+
+    int n = grid.size();
+    int m = grid[0].size();
+
+    if(r < 0 || r >= n ||
+       c < 0 || c >= m ||
+       grid[r][c] == 0)
+        return;
+
+    grid[r][c] = 0;
+
+    dfs(grid, r+1, c);
+    dfs(grid, r-1, c);
+    dfs(grid, r, c+1);
+    dfs(grid, r, c-1);
+}
+
+int countIslands(
+    vector<vector<int>>& grid
+) {
+
+    int count = 0;
+
+    for(int r = 0; r < n; r++) {
+
+        for(int c = 0; c < m; c++) {
+
+            if(grid[r][c] == 1) {
+
+                count++;
+
+                dfs(grid, r, c);
+            }
+        }
+    }
+
+    return count;
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER IDEA
+
+```
+FIND UNVISITED COMPONENT
+        ↓
+    COUNT +1
+        ↓
+    FLOOD FILL
+        ↓
+MARK WHOLE COMPONENT
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+islands
+connected cells
+connected regions
+components
+
+    ↓
+
+DFS / BFS
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 17. BFS SHORTEST PATH IN GRID
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Find minimum number of moves from:
+
+```
+SOURCE
+```
+
+to:
+
+```
+DESTINATION
+```
+
+in an unweighted grid.
+
+───────────────────────────────────────────────────────────────
+
+## FIRST RECOGNITION
+
+```
+shortest path
+   +
+unweighted
+   +
+grid
+```
+
+Think:
+
+```
+BFS
+```
+
+───────────────────────────────────────────────────────────────
+
+## WHY BFS?
+
+BFS explores:
+
+```
+distance 0
+   ↓
+distance 1
+   ↓
+distance 2
+   ↓
+...
+```
+
+Therefore the first time we reach destination:
+
+```
+shortest path
+```
+
+───────────────────────────────────────────────────────────────
+
+## DIRECTIONS
+
+```
+UP
+DOWN
+LEFT
+RIGHT
+```
+
+Represent:
+
+```
+dr = {-1,1,0,0}
+dc = {0,0,-1,1}
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE TEMPLATE
+
+```
+queue<pair<int,int>> q;
+
+q.push({sr, sc});
+
+dist[sr][sc] = 0;
+
+while(!q.empty()) {
+
+    auto [r,c] = q.front();
+    q.pop();
+
+    for(int d = 0; d < 4; d++) {
+
+        int nr = r + dr[d];
+        int nc = c + dc[d];
+
+        if(valid(nr,nc) &&
+           notVisited(nr,nc)) {
+
+            dist[nr][nc] =
+                dist[r][c] + 1;
+
+            q.push({nr,nc});
+        }
+    }
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER RULE
+
+```
+SHORTEST PATH
+   +
+UNWEIGHTED
+
+    ↓
+
+   BFS
+```
+
+───────────────────────────────────────────────────────────────
+
+## IMPORTANT
+
+If edges have arbitrary positive weights:
+
+```
+NOT ordinary BFS.
+```
+
+Think:
+
+```
+Dijkstra
+```
+
+But for a TCS high-ROI revision:
+
+```
+BFS is the first template to recognize.
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 18. CLIMBING STAIRS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+You can climb:
+
+```
+1 step
+OR
+2 steps
+```
+
+How many ways to reach step N?
+
+───────────────────────────────────────────────────────────────
+
+## INTUITION
+
+To reach N:
+
+Last move is either:
+
+```
+from N-1
+```
+
+OR:
+
+```
+from N-2
+```
+
+Therefore:
+
+```
+dp[n] =
+    dp[n-1] +
+    dp[n-2]
+```
+
+───────────────────────────────────────────────────────────────
+
+## BASE CASE
+
+```
+dp[0] = 1
+dp[1] = 1
+```
+
+Then:
+
+```
+dp[2] = 2
+dp[3] = 3
+dp[4] = 5
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+long long prev2 = 1;
+long long prev1 = 1;
+
+for(int i = 2; i <= n; i++) {
+
+    long long cur =
+        prev1 + prev2;
+
+    prev2 = prev1;
+    prev1 = cur;
+}
+
+cout << prev1;
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER QUESTION
+
+Ask:
+
+```
+"What could the LAST move have been?"
+```
+
+If:
+
+```
+1 step
+OR
+2 steps
+```
+
+then:
+
+```
+previous states
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+number of ways
+steps
+1 or 2 choices
+previous states
+
+    ↓
+
+FIBONACCI DP
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 19. HOUSE ROBBER
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+Houses contain:
+
+```
+[2,7,9,3,1]
+```
+
+Cannot rob adjacent houses.
+
+Maximum money:
+
+```
+2 + 9 + 1
+= 12
+```
+
+───────────────────────────────────────────────────────────────
+
+## FIRST RECOGNITION
+
+Question contains:
+
+```
+choose elements
+   +
+cannot choose adjacent
+   +
+maximize
+```
+
+Think:
+
+```
+TAKE / SKIP DP
+```
+
+───────────────────────────────────────────────────────────────
+
+## STATE
+
+At each house:
+
+```
+TAKE current
+```
+
+OR:
+
+```
+SKIP current
+```
+
+───────────────────────────────────────────────────────────────
+
+## TRANSITION
+
+If take current:
+
+```
+previous house cannot be taken.
+```
+
+Therefore:
+
+```
+take =
+    a[i] + dp[i-2]
+```
+
+Skip:
+
+```
+dp[i-1]
+```
+
+So:
+
+```
+dp[i] =
+    max(
+        dp[i-1],
+        a[i] + dp[i-2]
+    )
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+long long prev2 = 0;
+long long prev1 = 0;
+
+for(int x : a) {
+
+    long long take =
+        prev2 + x;
+
+    long long skip =
+        prev1;
+
+    long long cur =
+        max(take, skip);
+
+    prev2 = prev1;
+    prev1 = cur;
+}
+
+cout << prev1;
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER STORY
+
+```
+             CURRENT
+                │
+          ┌─────┴─────┐
+          │           │
+         TAKE        SKIP
+          │           │
+          ▼           ▼
+      i-2 state     i-1 state
+          │           │
+          └─────┬─────┘
+                ▼
+               MAX
+```
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+choose / skip
+adjacent restriction
+maximum sum
+cannot take consecutive
+
+    ↓
+
+TAKE / SKIP DP
+```
+
+───────────────────────────────────────────────────────────────
+
+# 20. 0/1 KNAPSACK — TAKE / SKIP
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## PROBLEM
+
+You have:
+
+```
+weights
+values
+capacity W
+```
+
+Each item can be:
+
+```
+TAKE once
+```
+
+OR:
+
+```
+SKIP
+```
+
+Maximize total value.
+
+───────────────────────────────────────────────────────────────
+
+## FIRST RECOGNITION
+
+Words:
+
+```
+choose items
+capacity
+maximize value
+each item once
+```
+
+Think:
+
+```
+0/1 KNAPSACK
+```
+
+───────────────────────────────────────────────────────────────
+
+## STATE
+
+```
+dp[i][w]
+```
+
+means:
+
+```
+maximum value using
+first i items
+with capacity w
+```
+
+───────────────────────────────────────────────────────────────
+
+## CHOICE
+
+For item i:
+
+```
+SKIP
+```
+
+OR:
+
+```
+TAKE
+```
+
+If weight fits:
+
+```
+take =
+    value[i]
+    +
+    dp[i-1][w-weight[i]]
+```
+
+skip:
+
+```
+dp[i-1][w]
+```
+
+Therefore:
+
+```
+dp[i][w] =
+    max(
+        skip,
+        take
+    )
+```
+
+───────────────────────────────────────────────────────────────
+
+## CODE
+
+```
+vector<vector<int>> dp(
+    n+1,
+    vector<int>(W+1, 0)
+);
+
+for(int i = 1; i <= n; i++) {
+
+    for(int w = 0; w <= W; w++) {
+
+        dp[i][w] =
+            dp[i-1][w];
+
+        if(weight[i-1] <= w) {
+
+            dp[i][w] =
+                max(
+                    dp[i][w],
+                    value[i-1] +
+                    dp[
+                        i-1
+                    ][
+                        w-weight[i-1]
+                    ]
+                );
+        }
+    }
+}
+
+cout << dp[n][W];
+```
+
+───────────────────────────────────────────────────────────────
+
+## MASTER QUESTION
+
+If every item can be:
+
+```
+TAKE
+OR
+SKIP
+```
+
+think:
+
+```
+DP
+```
+
+───────────────────────────────────────────────────────────────
+
+## CRITICAL DIFFERENCE
+
+0/1:
+
+```
+each item ONCE
+```
+
+Unbounded:
+
+```
+same item can be used repeatedly
+```
+
+This difference changes the transition / loop direction.
+
+───────────────────────────────────────────────────────────────
+
+## RECOGNITION
+
+```
+capacity
+value
+weights
+select subset
+each item once
+
+    ↓
+
+0/1 KNAPSACK
+```
+
+═══════════════════════════════════════════════════════════════
+
+# TREE + GRAPH + DP MASTER MAP
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+```
+                     ADVANCED Q2
+                          │
+      ┌───────────────────┼────────────────────┐
+      │                   │                    │
+     TREE                GRAPH                 DP
+      │                   │                    │
+  ┌───┴────┐         ┌────┴────┐          ┌───┴────┐
+  │        │         │         │          │        │
+ DFS      BFS       DFS       BFS       TAKE/SKIP PREVIOUS
+  │        │         │         │          │        │
+height   level    components shortest   robber  stairs
+inorder          islands    path
+  │
+  ▼
+ BST
+  │
+inorder
+  │
+  ├── kth smallest
+  └── kth largest
+```
+
+═══════════════════════════════════════════════════════════════
+
+# THE MOST IMPORTANT TREE SIMILARITIES
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## HEIGHT
+
+```
+root
+  ↓
+solve left
+  ↓
+solve right
+  ↓
+max + 1
+```
+
+## INORDER
+
+```
+LEFT → ROOT → RIGHT
+```
+
+## BST
+
+```
+LEFT < ROOT < RIGHT
+```
+
+## KTH SMALLEST
+
+```
+BST
+  ↓
+INORDER
+  ↓
+kth visited
+```
+
+## KTH LARGEST
+
+```
+BST
+  ↓
+REVERSE INORDER
+  ↓
+kth visited
+```
+
+## LEVEL ORDER
+
+```
+TREE
+  ↓
+BFS
+  ↓
+QUEUE
+```
+
+═══════════════════════════════════════════════════════════════
+
+# THE MOST IMPORTANT GRAPH SIMILARITIES
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## CONNECTED COMPONENTS
+
+```
+unvisited node
+     ↓
+  DFS/BFS
+     ↓
+mark component
+     ↓
+  count++
+```
+
+## ISLANDS
+
+```
+unvisited LAND
+     ↓
+   DFS/BFS
+     ↓
+ flood fill
+```
+
+## SHORTEST PATH
+
+```
+unweighted
+     +
+shortest
+     ↓
+   BFS
+```
+
+## GENERAL GRAPH TRAVERSAL
+
+```
+"visit all reachable nodes"
+
+    ↓
+
+DFS / BFS
+```
+
+═══════════════════════════════════════════════════════════════
+
+# THE MOST IMPORTANT DP SIMILARITIES
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## CLIMBING STAIRS
+
+```
+LAST MOVE
+   │
+   ├── 1
+   └── 2
+
+    ↓
+
+dp[i-1] + dp[i-2]
+```
+
+## HOUSE ROBBER
+
+```
+CURRENT
+   │
+   ├── TAKE
+   └── SKIP
+
+    ↓
+
+max(
+    dp[i-2] + current,
+    dp[i-1]
+)
+```
+
+## KNAPSACK
+
+```
+CURRENT ITEM
+   │
+   ├── TAKE
+   └── SKIP
+
+    ↓
+
+max(
+    take,
+    skip
+)
+```
+
+═══════════════════════════════════════════════════════════════
+
+# DP RECOGNITION ENGINE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Question:
+
+```
+"There are multiple choices."
+
+    ↓
+```
+
+Ask:
+
+```
+"Does the same smaller problem
+ appear repeatedly?"
+
+    ↓
+```
+
+YES
+
+```
+    ↓
+
+DP candidate
+
+    ↓
+```
+
+Ask:
+
+```
+"What is my choice?"
+
+    ↓
+
+TAKE / SKIP
+    OR
+PREVIOUS STATES
+```
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 STORY → PATTERN TRANSLATOR
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"Height of binary tree"
+↓
+DFS RECURSION
+
+"Visit tree root-left-right"
+↓
+PREORDER
+
+"Visit left-root-right"
+↓
+INORDER
+
+"BST + search"
+↓
+BST PROPERTY
+
+"BST + kth smallest"
+↓
+INORDER
+
+"BST + kth largest"
+↓
+REVERSE INORDER
+
+"Level by level"
+↓
+BFS + QUEUE
+
+"Number of islands"
+↓
+DFS/BFS FLOOD FILL
+
+"Connected components"
+↓
+DFS/BFS
+
+"Shortest path in unweighted grid"
+↓
+BFS
+
+"Number of ways to climb"
+↓
+FIBONACCI DP
+
+"Cannot take adjacent"
+↓
+TAKE / SKIP DP
+
+"Capacity + weight + value"
+↓
+0/1 KNAPSACK
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 CORE CODE LINES
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## TREE HEIGHT
+
+```
+if(!root)
+    return 0;
+
+return 1 + max(
+    height(root->left),
+    height(root->right)
+);
+```
+
+───────────────────────────────────────────────────────────────
+
+## BST SEARCH
+
+```
+if(target < root->data)
+    root = root->left;
+else
+    root = root->right;
+```
+
+───────────────────────────────────────────────────────────────
+
+## KTH SMALLEST
+
+```
+LEFT
+ROOT
+RIGHT
+```
+
+───────────────────────────────────────────────────────────────
+
+## KTH LARGEST
+
+```
+RIGHT
+ROOT
+LEFT
+```
+
+───────────────────────────────────────────────────────────────
+
+## BFS
+
+```
+queue<Node*> q;
+
+q.push(root);
+
+while(!q.empty()) {
+
+    auto node = q.front();
+    q.pop();
+
+    ...
+}
+```
+
+───────────────────────────────────────────────────────────────
+
+## GRID DFS
+
+```
+dfs(r+1,c);
+dfs(r-1,c);
+dfs(r,c+1);
+dfs(r,c-1);
+```
+
+───────────────────────────────────────────────────────────────
+
+## BFS SHORTEST PATH
+
+```
+dist[nr][nc] =
+    dist[r][c] + 1;
+```
+
+───────────────────────────────────────────────────────────────
+
+## CLIMBING STAIRS
+
+```
+cur =
+    prev1 + prev2;
+```
+
+───────────────────────────────────────────────────────────────
+
+## HOUSE ROBBER
+
+```
+cur =
+    max(
+        prev1,
+        prev2 + x
+    );
+```
+
+───────────────────────────────────────────────────────────────
+
+## KNAPSACK
+
+```
+dp[i][w] =
+    max(
+        dp[i-1][w],
+        value[i-1]
+        + dp[i-1][w-weight[i-1]]
+    );
+```
+
+═══════════════════════════════════════════════════════════════
+
+# ADVANCED Q2 COMMON TRAPS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1.
+
+TREE HEIGHT:
+
+Clarify whether height means:
+
+```
+number of nodes
+```
+
+or:
+
+```
+number of edges.
+```
+
+Most coding implementations commonly use:
+
+```
+NULL → 0
+```
+
+which gives height in nodes.
+
+───────────────────────────────────────────────────────────────
+
+2.
+
+BST:
+
+Don't forget:
+
+```
+inorder = sorted
+```
+
+───────────────────────────────────────────────────────────────
+
+3.
+
+KTH:
+
+Do not sort a separate array unless necessary.
+
+BST structure already gives order.
+
+───────────────────────────────────────────────────────────────
+
+4.
+
+BFS:
+
+Mark visited when:
+
+```
+ENQUEUE
+```
+
+rather than repeatedly enqueueing the same node.
+
+───────────────────────────────────────────────────────────────
+
+5.
+
+GRID:
+
+Always check:
+
+```
+row bounds
+column bounds
+visited / blocked condition
+```
+
+───────────────────────────────────────────────────────────────
+
+6.
+
+SHORTEST PATH:
+
+Unweighted graph:
+
+```
+BFS
+```
+
+Weighted graph:
+
+```
+Dijkstra / other weighted method
+```
+
+───────────────────────────────────────────────────────────────
+
+7.
+
+DP:
+
+Always define:
+
+```
+STATE
+```
+
+before writing recurrence.
+
+───────────────────────────────────────────────────────────────
+
+8.
+
+HOUSE ROBBER:
+
+Current choice:
+
+```
+TAKE
+OR
+SKIP
+```
+
+Never take adjacent houses.
+
+───────────────────────────────────────────────────────────────
+
+9.
+
+KNAPSACK:
+
+0/1:
+
+```
+ONE USE
+```
+
+Unbounded:
+
+```
+MULTIPLE USES
+```
+
+───────────────────────────────────────────────────────────────
+
+10.
+
+RECURSION:
+
+Always ask:
+
+```
+What is the BASE CASE?
+```
+
+and:
+
+```
+Does every recursive call move
+ toward the base case?
+```
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 MASTER — 20 PROBLEMS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STACK / WINDOW / HEAP
+
+```
+1. Postfix Expression
+2. Fixed Sliding Window
+3. Longest Unique Substring
+4. Subarray Sum
+5. Next Greater Element
+6. Balanced Parentheses
+7. Sort 0/1/2
+8. K Largest — Min Heap
+9. Prefix Sum
+10. Monotonic Stack / 2289-type
+```
+
+TREE / BST / GRAPH / DP
+
+```
+11. Tree Height
+12. Tree Traversals
+13. BST Search
+14. Kth Smallest / Largest BST
+15. Level Order
+16. Islands / Connected Components
+17. BFS Grid Shortest Path
+18. Climbing Stairs
+19. House Robber
+20. 0/1 Knapsack
+```
+
+═══════════════════════════════════════════════════════════════
+
+# 20 PROBLEMS → CORE PATTERNS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+20 PROBLEMS
+
+```
+  ↓
+
+STACK
+  │
+  ├── Postfix
+  ├── Brackets
+  ├── Next Greater
+  └── Monotonic Stack
+
+SLIDING WINDOW
+  │
+  ├── Fixed K
+  ├── Longest Unique
+  └── Subarray
+
+HEAP
+  │
+  └── Top K
+
+PREFIX
+  │
+  ├── Range Sum
+  └── Subarray Sum
+
+TREE
+  │
+  ├── DFS
+  ├── Traversal
+  ├── BST
+  └── BFS
+
+GRAPH
+  │
+  ├── DFS
+  ├── BFS
+  ├── Components
+  └── Shortest Path
+
+DP
+  │
+  ├── Fibonacci
+  ├── Take / Skip
+  └── Knapsack
+```
+
+═══════════════════════════════════════════════════════════════
+
+# Q2 INSTANT RECOGNITION — FINAL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"Expression evaluation"
+↓
+STACK
+
+"Matching brackets"
+↓
+STACK
+
+"Next greater"
+↓
+MONOTONIC STACK
+
+"Exactly K consecutive"
+↓
+FIXED WINDOW
+
+"Longest valid substring"
+↓
+VARIABLE WINDOW
+
+"Top K largest"
+↓
+MIN HEAP
+
+"Range sum queries"
+↓
+PREFIX SUM
+
+"Tree height"
+↓
+DFS
+
+"Root-left-right"
+↓
+PREORDER
+
+"Left-root-right"
+↓
+INORDER
+
+"BST kth smallest"
+↓
+INORDER
+
+"BST kth largest"
+↓
+REVERSE INORDER
+
+"Level by level"
+↓
+BFS
+
+"Islands"
+↓
+DFS/BFS
+
+"Shortest path in unweighted grid"
+↓
+BFS
+
+"Number of ways"
+↓
+DP
+
+"Cannot take adjacent"
+↓
+TAKE / SKIP
+
+"Capacity + value + weight"
+↓
+KNAPSACK
+
+═══════════════════════════════════════════════════════════════
+
+# THE Q2 DECISION TREE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+```
+                     Q2 QUESTION
+                          │
+                          ▼
+                WHAT STRUCTURE?
+                          │
+   ┌──────────────┬───────┼───────────┬──────────────┐
+   ▼              ▼       ▼           ▼              ▼
+```
+
+EXPRESSION       ARRAY    TREE       GRAPH           CHOICES
+│              │       │           │                │
+STACK       ┌────┴───┐   │      ┌────┴────┐           │
+│        │   │      │         │           │
+WINDOW    TOP K      BFS       DFS         DP
+│        │         │         │
+SLIDING   HEAP     shortest  components
+│
+┌─────┴─────┐
+│           │
+FIXED      VARIABLE
+│           │
+K        condition
+
+═══════════════════════════════════════════════════════════════
+
+# TONIGHT'S PRIORITY — VERY IMPORTANT
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DO NOT spend equal time on all 20.
+
+If time is extremely limited:
+
+TIER 1 — MUST MASTER
+
+```
+1. Postfix
+2. Sliding Window
+3. Next Greater / Monotonic Stack
+4. K Largest / Heap
+5. BST Kth Smallest/Largest
+6. BFS / DFS
+7. House Robber / Take-Skip DP
+```
+
+TIER 2 — KNOW TEMPLATE
+
+```
+8. Balanced Parentheses
+9. Prefix Sum
+10. Tree Height
+11. Level Order
+12. Climbing Stairs
+```
+
+TIER 3 — HEDGE
+
+```
+13. 0/1 Knapsack
+14. Islands
+15. Grid shortest path
+16. Sort 0/1/2
+17. Longest Unique
+18. Subarray Sum
+19. 2289-type
+20. Remaining variants
+```
+
+═══════════════════════════════════════════════════════════════
+
+# FINAL Q1 + Q2 MASTER SYSTEM
+
+```
+                     TCS NQT
+                        │
+             ┌──────────┴──────────┐
+             │                     │
+            Q1                    Q2
+             │                     │
+       EASY/BASIC              MEDIUM+
+             │                     │
+       30 patterns             20 patterns
+             │                     │
+    ┌────────┴────────┐      ┌─────┴──────┐
+    │                 │      │            │
+  ARRAY             STRING  STACK       WINDOW
+    │                 │      │            │
+  SEARCH            HASH    HEAP         SUM
+    │                        │
+  NUMBER                    TREE
+    │                        │
+  MATRIX                    BST
+                             │
+                            GRAPH
+                             │
+                             DP
+```
+
+═══════════════════════════════════════════════════════════════
+
+# THE ONE THING TO REMEMBER TOMORROW
+
+Do NOT read the story and panic.
+
+Translate:
+
+```
+STORY
+  ↓
+STRUCTURE
+  ↓
+PATTERN
+  ↓
+TEMPLATE
+```
+
+Examples:
+
+```
+"Employee removes people
+ based on next employee"
+
+    ↓
+
+ARRAY + NEIGHBOUR CONDITION
+
+    ↓
+
+MONOTONIC STACK
+
+
+"K highest salaries"
+
+    ↓
+
+TOP K
+
+    ↓
+
+MIN HEAP
+
+
+"Kth smallest in BST"
+
+    ↓
+
+BST ORDER
+
+    ↓
+
+INORDER
+
+
+"Shortest route through grid"
+
+    ↓
+
+UNWEIGHTED SHORTEST PATH
+
+    ↓
+
+BFS
+
+
+"Cannot select adjacent houses"
+
+    ↓
+
+TAKE / SKIP
+
+    ↓
+
+DP
+```
+
+═══════════════════════════════════════════════════════════════
+
+# END — Q2 MASTER PART 2
+
+CURRENT REVISION SET:
+
+```
+Q1 → 30 high-ROI patterns
+
+Q2 → 20 high-ROI patterns
+```
+
+TOTAL:
+
+```
+50 representative problems
+```
+
+BUT:
+
+```
+50 problems ≠ 50 unrelated things.
+```
+
+They collapse into roughly:
+
+```
+HASHING
+SORTING
+BINARY SEARCH
+TWO POINTER
+PREFIX SUM
+SLIDING WINDOW
+STACK
+MONOTONIC STACK
+HEAP
+TREE DFS
+TREE BFS
+BST
+GRAPH DFS/BFS
+BASIC DP
+```
+
+That is the actual knowledge you need to carry into the exam.
+
+═══════════════════════════════════════════════════════════════
